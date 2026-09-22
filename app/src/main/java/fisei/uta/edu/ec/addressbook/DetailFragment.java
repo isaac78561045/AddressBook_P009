@@ -1,5 +1,5 @@
 // DetailFragment.java
-// Fragment subclass that displays one contact's details
+// Subclase de fragmento que muestra los detalles de un contacto
 package fisei.uta.edu.ec.addressbook;
 
 import android.app.AlertDialog;
@@ -27,60 +27,60 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class DetailFragment extends Fragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // callback methods implemented by MainActivity
+    // métodos de devolución de llamada implementados por MainActivity
     public interface DetailFragmentListener {
-        void onContactDeleted(); // called when a contact is deleted
+        void onContactDeleted(); // llamado cuando se elimina un contacto
 
-        // pass Uri of contact to edit to the DetailFragmentListener
+        // pasar Uri del contacto a editar a DetailFragmentListener
         void onEditContact(Uri contactUri);
     }
 
-    private static final int CONTACT_LOADER = 0; // identifies the Loader
+    private static final int CONTACT_LOADER = 0; // identifica el Loader
 
     private DetailFragmentListener listener; // MainActivity
-    private Uri contactUri; // Uri of selected contact
+    private Uri contactUri; // Uri del contacto seleccionado
 
-    private TextView nameTextView; // displays contact's name
-    private TextView phoneTextView; // displays contact's phone
-    private TextView emailTextView; // displays contact's email
-    private TextView streetTextView; // displays contact's street
-    private TextView cityTextView; // displays contact's city
-    private TextView stateTextView; // displays contact's state
-    private TextView zipTextView; // displays contact's zip
+    private TextView nameTextView; // muestra el nombre del contacto
+    private TextView phoneTextView; // muestra el teléfono del contacto
+    private TextView emailTextView; // muestra el correo electrónico del contacto
+    private TextView streetTextView; // muestra la calle del contacto
+    private TextView cityTextView; // muestra la ciudad del contacto
+    private TextView stateTextView; // muestra el estado/provincia del contacto
+    private TextView zipTextView; // muestra el código postal del contacto
 
-    // set DetailFragmentListener when fragment attached
+    // establece DetailFragmentListener cuando se adjunta el fragmento
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         listener = (DetailFragmentListener) context;
     }
 
-    // remove DetailFragmentListener when fragment detached
+    // elimina DetailFragmentListener cuando se desconecta el fragmento
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
     }
 
-    // called when DetailFragmentListener's view needs to be created
+    // llamado cuando se necesita crear la vista de DetailFragmentListener
     @Override
     public View onCreateView(
         LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setHasOptionsMenu(true); // this fragment has menu items to display
+        setHasOptionsMenu(true); // este fragmento tiene elementos de menú para mostrar
 
-        // get Bundle of arguments then extract the contact's Uri
+        // obtiene el Bundle de argumentos y luego extrae la Uri del contacto
         Bundle arguments = getArguments();
 
         if (arguments != null)
             contactUri = arguments.getParcelable(MainActivity.CONTACT_URI);
 
-        // inflate DetailFragment's layout
+        // infla el diseño de DetailFragment
         View view =
             inflater.inflate(R.layout.fragment_details, container, false);
 
-        // get the EditTexts
+        // obtiene los TextViews
         nameTextView = (TextView) view.findViewById(R.id.nameTextView);
         phoneTextView = (TextView) view.findViewById(R.id.phoneTextView);
         emailTextView = (TextView) view.findViewById(R.id.emailTextView);
@@ -89,29 +89,29 @@ public class DetailFragment extends Fragment
         stateTextView = (TextView) view.findViewById(R.id.stateTextView);
         zipTextView = (TextView) view.findViewById(R.id.zipTextView);
 
-        // load the contact
+        // carga el contacto
         LoaderManager.getInstance(this).initLoader(
             CONTACT_LOADER, null, this);
         return view;
     }
 
-    // display this fragment's menu items
+    // muestra los elementos de menú de este fragmento
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_details_menu, menu);
     }
 
-    // handle menu item selections
-    // NOTE: R.id values are not guaranteed to be compile-time constants
-    // in this project's Android Gradle Plugin version, so we use
-    // if/else instead of a switch statement (which requires constants).
+    // maneja las selecciones de elementos de menú
+    // NOTA: los valores de R.id no están garantizados como constantes en tiempo de compilación
+    // en esta versión del plugin de Android Gradle del proyecto, así que usamos
+    // if/else en lugar de una declaración switch (que requiere constantes).
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_edit) {
-            listener.onEditContact(contactUri); // pass Uri to listener
+            listener.onEditContact(contactUri); // pasa la Uri al listener
             return true;
         }
         else if (itemId == R.id.action_delete) {
@@ -122,52 +122,52 @@ public class DetailFragment extends Fragment
         return super.onOptionsItemSelected(item);
     }
 
-    // delete a contact
+    // elimina un contacto
     private void deleteContact() {
         if (getActivity() == null) return;
 
-        // create an AlertDialog Builder and display confirmation dialog
+        // crea un AlertDialog Builder y muestra el diálogo de confirmación
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.confirm_title);
         builder.setMessage(R.string.confirm_message);
 
-        // provide an OK button that deletes the contact
+        // proporciona un botón Aceptar que elimina el contacto
         builder.setPositiveButton(R.string.button_delete,
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int button) {
                     if (getActivity() != null && contactUri != null) {
-                        // use Activity's ContentResolver to invoke
-                        // delete on the AddressBookContentProvider
+                        // usa el ContentResolver de Activity para invocar
+                        // eliminar en AddressBookContentProvider
                         getActivity().getContentResolver().delete(
                             contactUri, null, null);
                     }
                     if (listener != null) {
-                        listener.onContactDeleted(); // notify listener
+                        listener.onContactDeleted(); // notifica al listener
                     }
                 }
             }
         );
 
         builder.setNegativeButton(R.string.button_cancel, null);
-        builder.create().show(); // return and show the AlertDialog
+        builder.create().show(); // devuelve y muestra el AlertDialog
     }
 
-    // called by LoaderManager to create a Loader
+    // llamado por LoaderManager para crear un Loader
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // create an appropriate CursorLoader based on the id argument;
-        // only one Loader in this fragment, so the if is unnecessary
+        // crea un CursorLoader apropiado basado en el argumento id;
+        // solo un Loader en este fragmento, por lo que el if es innecesario
         CursorLoader cursorLoader;
 
         if (id == CONTACT_LOADER) {
             cursorLoader = new CursorLoader(getActivity(),
-                contactUri, // Uri of contact to display
-                null, // null projection returns all columns
-                null, // null selection returns all rows
-                null, // no selection arguments
-                null); // sort order
+                contactUri, // Uri del contacto a mostrar
+                null, // la proyección null devuelve todas las columnas
+                null, // la selección null devuelve todas las filas
+                null, // sin argumentos de selección
+                null); // orden de clasificación
         }
         else {
             cursorLoader = null;
@@ -176,21 +176,21 @@ public class DetailFragment extends Fragment
         return cursorLoader;
     }
 
-    // called by LoaderManager when loading completes
+    // llamado por LoaderManager cuando se completa la carga
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        // if the contact exists in the database, display its data
+        // si el contacto existe en la base de datos, muestra sus datos
         if (data != null && data.moveToFirst()) {
-            // get the column index for each data item
-            int nameIndex = data.getColumnIndex(Contact.COLUMN_NAME);
-            int phoneIndex = data.getColumnIndex(Contact.COLUMN_PHONE);
-            int emailIndex = data.getColumnIndex(Contact.COLUMN_EMAIL);
-            int streetIndex = data.getColumnIndex(Contact.COLUMN_STREET);
-            int cityIndex = data.getColumnIndex(Contact.COLUMN_CITY);
-            int stateIndex = data.getColumnIndex(Contact.COLUMN_STATE);
-            int zipIndex = data.getColumnIndex(Contact.COLUMN_ZIP);
+            // obtiene el índice de la columna para cada elemento de datos
+            int nameIndex = data.getColumnIndexOrThrow(Contact.COLUMN_NAME);
+            int phoneIndex = data.getColumnIndexOrThrow(Contact.COLUMN_PHONE);
+            int emailIndex = data.getColumnIndexOrThrow(Contact.COLUMN_EMAIL);
+            int streetIndex = data.getColumnIndexOrThrow(Contact.COLUMN_STREET);
+            int cityIndex = data.getColumnIndexOrThrow(Contact.COLUMN_CITY);
+            int stateIndex = data.getColumnIndexOrThrow(Contact.COLUMN_STATE);
+            int zipIndex = data.getColumnIndexOrThrow(Contact.COLUMN_ZIP);
 
-            // fill TextViews with the retrieved data
+            // llena los TextViews con los datos recuperados
             nameTextView.setText(data.getString(nameIndex));
             phoneTextView.setText(data.getString(phoneIndex));
             emailTextView.setText(data.getString(emailIndex));
@@ -201,7 +201,7 @@ public class DetailFragment extends Fragment
         }
     }
 
-    // called by LoaderManager when the Loader is being reset
+    // llamado por LoaderManager cuando el Loader se está reiniciando
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 }

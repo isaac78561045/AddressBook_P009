@@ -1,5 +1,5 @@
 // ContactsFragment.java
-// Fragment subclass that displays the alphabetical list of contact names
+// Subclase de Fragmento que muestra la lista alfabética de nombres de contactos
 package fisei.uta.edu.ec.addressbook;
 
 import android.content.Context;
@@ -25,41 +25,41 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class ContactsFragment extends Fragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // callback method implemented by MainActivity
+    // método de devolución de llamada implementado por MainActivity
     public interface ContactsFragmentListener {
-        // called when contact selected
+        // llamado cuando se selecciona un contacto
         void onContactSelected(Uri contactUri);
 
-        // called when add button is pressed
+        // llamado cuando se presiona el botón de agregar
         void onAddContact();
     }
 
-    private static final int CONTACTS_LOADER = 0; // identifies Loader
+    private static final int CONTACTS_LOADER = 0; // identifica el Loader
 
-    // used to inform the MainActivity when a contact is selected
+    // utilizado para informar a MainActivity cuando se selecciona un contacto
     private ContactsFragmentListener listener;
 
-    private ContactsAdapter contactsAdapter; // adapter for recyclerView
+    private ContactsAdapter contactsAdapter; // adaptador para recyclerView
 
-    // configures this fragment's GUI
+    // configura la interfaz de usuario de este fragmento
     @Override
     public View onCreateView(
         LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setHasOptionsMenu(true); // fragment has menu items to display
+        setHasOptionsMenu(true); // el fragmento tiene elementos de menú para mostrar
 
-        // inflate GUI and get reference to the RecyclerView
+        // infla la interfaz de usuario y obtiene una referencia al RecyclerView
         View view = inflater.inflate(
             R.layout.fragment_contacts, container, false);
         RecyclerView recyclerView =
             (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        // recyclerView should display items in a vertical list
+        // recyclerView debería mostrar elementos en una lista vertical
         recyclerView.setLayoutManager(
             new LinearLayoutManager(getActivity().getBaseContext()));
 
-        // create recyclerView's adapter and item click listener
+        // crea el adaptador del recyclerView y el detector de clics de elementos
         contactsAdapter = new ContactsAdapter(
             new ContactsAdapter.ContactClickListener() {
                 @Override
@@ -68,20 +68,20 @@ public class ContactsFragment extends Fragment
                 }
             }
         );
-        recyclerView.setAdapter(contactsAdapter); // set the adapter
+        recyclerView.setAdapter(contactsAdapter); // establece el adaptador
 
-        // attach a custom ItemDecorator to draw dividers between list items
+        // adjunta un ItemDecorator personalizado para dibujar divisores entre elementos de la lista
         recyclerView.addItemDecoration(new ItemDivider(getContext()));
 
-        // improves performance if RecyclerView's layout size never changes
+        // mejora el rendimiento si el tamaño del diseño del RecyclerView nunca cambia
         recyclerView.setHasFixedSize(true);
 
-        // get the FloatingActionButton and configure its listener
+        // obtiene el FloatingActionButton y configura su detector
         FloatingActionButton addButton =
             (FloatingActionButton) view.findViewById(R.id.addButton);
         addButton.setOnClickListener(
             new View.OnClickListener() {
-                // displays the AddEditFragment when FAB is touched
+                // muestra el AddEditFragment cuando se toca el FAB
                 @Override
                 public void onClick(View view) {
                     listener.onAddContact();
@@ -92,60 +92,60 @@ public class ContactsFragment extends Fragment
         return view;
     }
 
-    // set ContactsFragmentListener when fragment attached
+    // establece ContactsFragmentListener cuando se adjunta el fragmento
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         listener = (ContactsFragmentListener) context;
     }
 
-    // remove ContactsFragmentListener when Fragment detached
+    // elimina ContactsFragmentListener cuando se desconecta el fragmento
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
     }
 
-    // initialize a Loader when this fragment's activity is created
+    // inicializa un Loader cuando se crea la actividad de este fragmento
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LoaderManager.getInstance(this).initLoader(CONTACTS_LOADER, null, this);
     }
 
-    // called from MainActivity when other Fragment's update database
+    // llamado desde MainActivity cuando otro fragmento actualiza la base de datos
     public void updateContactList() {
         if (contactsAdapter != null) {
             contactsAdapter.notifyDataSetChanged();
         }
     }
 
-    // called by LoaderManager to create a Loader
+    // llamado por LoaderManager para crear un Loader
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // create an appropriate CursorLoader based on the id argument;
-        // only one Loader in this fragment, so the switch is unnecessary
+        // crea un CursorLoader apropiado basado en el argumento id;
+        // solo un Loader en este fragmento, por lo que el switch es innecesario
         switch (id) {
             case CONTACTS_LOADER:
                 return new CursorLoader(getActivity(),
-                    Contact.CONTENT_URI, // Uri of contacts table
-                    null, // null projection returns all columns
-                    null, // null selection returns all rows
-                    null, // no selection arguments
-                    Contact.COLUMN_NAME + " COLLATE NOCASE ASC"); // sort order
+                    Contact.CONTENT_URI, // Uri de la tabla de contactos
+                    null, // la proyección null devuelve todas las columnas
+                    null, // la selección null devuelve todas las filas
+                    null, // sin argumentos de selección
+                    Contact.COLUMN_NAME + " COLLATE NOCASE ASC"); // orden de clasificación
             default:
                 return null;
         }
     }
 
-    // called by LoaderManager when loading completes
+    // llamado por LoaderManager cuando se completa la carga
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         contactsAdapter.swapCursor(data);
     }
 
-    // called by LoaderManager when the Loader is being reset
+    // llamado por LoaderManager cuando el Loader se está reiniciando
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         contactsAdapter.swapCursor(null);

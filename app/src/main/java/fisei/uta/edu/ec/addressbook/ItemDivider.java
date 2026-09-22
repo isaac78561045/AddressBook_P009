@@ -1,6 +1,6 @@
 // ItemDivider.java
-// RecyclerView.ItemDecoration subclass for drawing dividers between
-// RecyclerView items
+// Subclase de RecyclerView.ItemDecoration para dibujar divisores entre
+// los elementos del RecyclerView
 package fisei.uta.edu.ec.addressbook;
 
 import android.content.Context;
@@ -13,13 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ItemDivider extends RecyclerView.ItemDecoration {
     private final Drawable divider;
 
-    // gets the device's default list item divider from the current theme
+    // obtiene el divisor de elementos de lista predeterminado del dispositivo a partir del tema actual
     public ItemDivider(Context context) {
         int[] attrs = {android.R.attr.listDivider};
         divider = context.obtainStyledAttributes(attrs).getDrawable(0);
     }
 
-    // draws the divider lines between the RecyclerView's items
+    // dibuja las líneas divisorias entre los elementos del RecyclerView
     @Override
     public void onDraw(Canvas canvas, RecyclerView parent,
         RecyclerView.State state) {

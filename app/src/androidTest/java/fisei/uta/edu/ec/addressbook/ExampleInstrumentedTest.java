@@ -11,15 +11,15 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Prueba instrumentada, que se ejecutará en un dispositivo Android.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @see <a href="http://d.android.com/tools/testing">Documentación de pruebas</a>
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
-        // Context of the app under test.
+        // Contexto de la aplicación bajo prueba.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("fisei.uta.edu.ec.addressbook", appContext.getPackageName());
     }

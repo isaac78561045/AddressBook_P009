@@ -1,6 +1,6 @@
 // DatabaseDescription.java
-// Describes the table name and column names for this app's database,
-// and other information required by the ContentProvider
+// Describe el nombre de la tabla y los nombres de las columnas para la base de datos de esta aplicación,
+// y otra información requerida por el ContentProvider
 package fisei.uta.edu.ec.addressbook.data;
 
 import android.content.ContentUris;
@@ -8,22 +8,22 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class DatabaseDescription {
-    // ContentProvider's name: typically the package name
+    // nombre de ContentProvider: normalmente el nombre del paquete
     public static final String AUTHORITY = "fisei.uta.edu.ec.addressbook.data";
 
-    // base URI used to interact with the ContentProvider
+    // URI base utilizada para interactuar con el ContentProvider
     private static final Uri BASE_CONTENT_URI =
         Uri.parse("content://" + AUTHORITY);
 
-    // nested class defines contents of the contacts table
+    // la clase anidada define el contenido de la tabla de contactos
     public static final class Contact implements BaseColumns {
-        public static final String TABLE_NAME = "contacts"; // table's name
+        public static final String TABLE_NAME = "contacts"; // nombre de la tabla
 
-        // Uri for the contacts table
+        // Uri para la tabla de contactos
         public static final Uri CONTENT_URI =
             BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 
-        // column names for contacts table's columns
+        // nombres de las columnas de la tabla de contactos
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_PHONE = "phone";
         public static final String COLUMN_EMAIL = "email";
@@ -32,7 +32,7 @@ public class DatabaseDescription {
         public static final String COLUMN_STATE = "state";
         public static final String COLUMN_ZIP = "zip";
 
-        // creates a Uri for a specific contact
+        // crea un Uri para un contacto específico
         public static Uri buildContactUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

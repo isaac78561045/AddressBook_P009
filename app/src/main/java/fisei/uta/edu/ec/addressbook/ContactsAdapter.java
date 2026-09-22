@@ -1,5 +1,5 @@
 // ContactsAdapter.java
-// Subclass of RecyclerView.Adapter that binds contacts to RecyclerView
+// Subclase de RecyclerView.Adapter que vincula los contactos al RecyclerView
 package fisei.uta.edu.ec.addressbook;
 
 import android.database.Cursor;
@@ -16,27 +16,27 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class ContactsAdapter
     extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
-    // interface implemented by ContactsFragment to respond
-    // when the user touches an item in the RecyclerView
+    // interfaz implementada por ContactsFragment para responder
+    // cuando el usuario toca un elemento en el RecyclerView
     public interface ContactClickListener {
         void onClick(Uri contactUri);
     }
 
-    // nested subclass of RecyclerView.ViewHolder used to implement
-    // the view-holder pattern in the context of a RecyclerView
+    // subclase anidada de RecyclerView.ViewHolder utilizada para implementar
+    // el patrón view-holder en el contexto de un RecyclerView
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView textView;
         private long rowID;
 
-        // configures a RecyclerView item's ViewHolder
+        // configura el ViewHolder de un elemento del RecyclerView
         public ViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(android.R.id.text1);
 
-            // attach listener to itemView
+            // adjunta el listener al itemView
             itemView.setOnClickListener(
                 new View.OnClickListener() {
-                    // executes when the contact in this ViewHolder is clicked
+                    // se ejecuta cuando se hace clic en el contacto de este ViewHolder
                     @Override
                     public void onClick(View view) {
                         clickListener.onClick(Contact.buildContactUri(rowID));
@@ -45,13 +45,13 @@ public class ContactsAdapter
             );
         }
 
-        // set the database row ID for the contact in this ViewHolder
+        // establece el ID de la fila de la base de datos para el contacto en este ViewHolder
         public void setRowID(long rowID) {
             this.rowID = rowID;
         }
     }
 
-    // ContactsAdapter instance variables
+    // variables de instancia de ContactsAdapter
     private Cursor cursor = null;
     private final ContactClickListener clickListener;
 
@@ -60,31 +60,31 @@ public class ContactsAdapter
         this.clickListener = clickListener;
     }
 
-    // sets up a new list item and its ViewHolder
+    // configura un nuevo elemento de lista y su ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // inflate the android.R.layout.simple_list_item_1 layout
+        // infla el diseño android.R.layout.simple_list_item_1
         View view = LayoutInflater.from(parent.getContext()).inflate(
             android.R.layout.simple_list_item_1, parent, false);
-        return new ViewHolder(view); // return current item's ViewHolder
+        return new ViewHolder(view); // devuelve el ViewHolder del elemento actual
     }
 
-    // sets the text of the list item to display the contact's name
+    // establece el texto del elemento de la lista para mostrar el nombre del contacto
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         cursor.moveToPosition(position);
-        holder.setRowID(cursor.getLong(cursor.getColumnIndex(Contact._ID)));
-        holder.textView.setText(cursor.getString(cursor.getColumnIndex(
+        holder.setRowID(cursor.getLong(cursor.getColumnIndexOrThrow(Contact._ID)));
+        holder.textView.setText(cursor.getString(cursor.getColumnIndexOrThrow(
             Contact.COLUMN_NAME)));
     }
 
-    // returns the number of items that adapter binds
+    // devuelve el número de elementos que el adaptador vincula
     @Override
     public int getItemCount() {
         return (cursor != null) ? cursor.getCount() : 0;
     }
 
-    // swap this adapter's current Cursor for a new one
+    // intercambia el Cursor actual de este adaptador por uno nuevo
     public void swapCursor(Cursor cursor) {
         this.cursor = cursor;
         notifyDataSetChanged();

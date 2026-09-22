@@ -1,5 +1,5 @@
 // AddressBookContentProvider.java
-// ContentProvider subclass for manipulating the app's database
+// Subclase de ContentProvider para manipular la base de datos de la aplicación
 package fisei.uta.edu.ec.addressbook.data;
 
 import android.content.ContentProvider;
@@ -14,89 +14,89 @@ import fisei.uta.edu.ec.addressbook.R;
 import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 
 public class AddressBookContentProvider extends ContentProvider {
-    // used to access the database
+    // utilizado para acceder a la base de datos
     private AddressBookDatabaseHelper dbHelper;
 
-    // UriMatcher helps ContentProvider determine operation to perform
+    // UriMatcher ayuda a ContentProvider a determinar la operación a realizar
     private static final UriMatcher uriMatcher =
         new UriMatcher(UriMatcher.NO_MATCH);
 
-    // constants used with UriMatcher to determine operation to perform
-    private static final int ONE_CONTACT = 1; // manipulate one contact
-    private static final int CONTACTS = 2; // manipulate contacts table
+    // constantes utilizadas con UriMatcher para determinar la operación a realizar
+    private static final int ONE_CONTACT = 1; // manipular un contacto
+    private static final int CONTACTS = 2; // manipular la tabla de contactos
 
-    // static block to configure this ContentProvider's UriMatcher
+    // bloque estático para configurar el UriMatcher de este ContentProvider
     static {
-        // Uri for Contact with the specified id (#)
+        // Uri para el Contacto con el id especificado (#)
         uriMatcher.addURI(DatabaseDescription.AUTHORITY,
             Contact.TABLE_NAME + "/#", ONE_CONTACT);
 
-        // Uri for Contacts table
+        // Uri para la tabla Contactos
         uriMatcher.addURI(DatabaseDescription.AUTHORITY,
             Contact.TABLE_NAME, CONTACTS);
     }
 
-    // called when the AddressBookContentProvider is created
+    // llamado cuando se crea AddressBookContentProvider
     @Override
     public boolean onCreate() {
-        // create the AddressBookDatabaseHelper
+        // crea el AddressBookDatabaseHelper
         dbHelper = new AddressBookDatabaseHelper(getContext());
-        return true; // ContentProvider successfully created
+        return true; // ContentProvider creado con éxito
     }
 
-    // required method: Not used in this app, so we return null
+    // método requerido: No se usa en esta aplicación, así que devolvemos null
     @Override
     public String getType(Uri uri) {
         return null;
     }
 
-    // query the database
+    // consultar la base de datos
     @Override
     public Cursor query(Uri uri, String[] projection,
         String selection, String[] selectionArgs, String sortOrder) {
 
-        // create SQLiteQueryBuilder for querying contacts table
+        // crea SQLiteQueryBuilder para consultar la tabla de contactos
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(Contact.TABLE_NAME);
 
         switch (uriMatcher.match(uri)) {
-            case ONE_CONTACT: // contact with the specified id will be selected
+            case ONE_CONTACT: // se seleccionará el contacto con el id especificado
                 queryBuilder.appendWhere(
                     Contact._ID + "=" + uri.getLastPathSegment());
                 break;
-            case CONTACTS: // all contacts will be selected
+            case CONTACTS: // se seleccionarán todos los contactos
                 break;
             default:
                 throw new UnsupportedOperationException(
                     getContext().getString(R.string.invalid_query_uri) + uri);
         }
 
-        // execute the query to select one or all contacts
+        // ejecuta la consulta para seleccionar uno o todos los contactos
         Cursor cursor = queryBuilder.query(dbHelper.getReadableDatabase(),
             projection, selection, selectionArgs, null, null, sortOrder);
 
-        // configure to watch for content changes
+        // configura para observar cambios en el contenido
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
-    // insert a new contact in the database
+    // inserta un nuevo contacto en la base de datos
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         Uri newContactUri = null;
 
         switch (uriMatcher.match(uri)) {
             case CONTACTS:
-                // insert the new contact--success yields new contact's row id
+                // inserta el nuevo contacto: el éxito produce el id de la fila del nuevo contacto
                 long rowId = dbHelper.getWritableDatabase().insert(
                     Contact.TABLE_NAME, null, values);
 
-                // if the contact was inserted, create an appropriate Uri;
-                // otherwise, throw an exception
-                if (rowId > 0) { // SQLite row IDs start at 1
+                // si el contacto fue insertado, crea una Uri apropiada;
+                // de lo contrario, lanza una excepción
+                if (rowId > 0) { // los IDs de las filas en SQLite comienzan en 1
                     newContactUri = Contact.buildContactUri(rowId);
 
-                    // notify observers that the database changed
+                    // notifica a los observadores que la base de datos cambió
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 else
@@ -111,18 +111,18 @@ public class AddressBookContentProvider extends ContentProvider {
         return newContactUri;
     }
 
-    // update an existing contact in the database
+    // actualiza un contacto existente en la base de datos
     @Override
     public int update(Uri uri, ContentValues values,
         String selection, String[] selectionArgs) {
-        int numberOfRowsUpdated; // 1 if update successful; 0 otherwise
+        int numberOfRowsUpdated; // 1 si la actualización fue exitosa; 0 en caso contrario
 
         switch (uriMatcher.match(uri)) {
             case ONE_CONTACT:
-                // get from the uri the id of contact to update
+                // obtiene de la uri el id del contacto a actualizar
                 String id = uri.getLastPathSegment();
 
-                // update the contact
+                // actualiza el contacto
                 numberOfRowsUpdated = dbHelper.getWritableDatabase().update(
                     Contact.TABLE_NAME, values, Contact._ID + "=" + id,
                     selectionArgs);
@@ -132,7 +132,7 @@ public class AddressBookContentProvider extends ContentProvider {
                     getContext().getString(R.string.invalid_update_uri) + uri);
         }
 
-        // if changes were made, notify observers that the database changed
+        // si se hicieron cambios, notifica a los observadores que la base de datos cambió
         if (numberOfRowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
             getContext().getContentResolver().notifyChange(Contact.CONTENT_URI, null);
@@ -141,17 +141,17 @@ public class AddressBookContentProvider extends ContentProvider {
         return numberOfRowsUpdated;
     }
 
-    // delete an existing contact from the database
+    // elimina un contacto existente de la base de datos
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int numberOfRowsDeleted;
 
         switch (uriMatcher.match(uri)) {
             case ONE_CONTACT:
-                // get from the uri the id of contact to update
+                // obtiene de la uri el id del contacto a actualizar
                 String id = uri.getLastPathSegment();
 
-                // delete the contact
+                // elimina el contacto
                 numberOfRowsDeleted = dbHelper.getWritableDatabase().delete(
                     Contact.TABLE_NAME, Contact._ID + "=" + id, selectionArgs);
                 break;
@@ -160,7 +160,7 @@ public class AddressBookContentProvider extends ContentProvider {
                     getContext().getString(R.string.invalid_delete_uri) + uri);
         }
 
-        // notify observers that the database changed
+        // notifica a los observadores que la base de datos cambió
         if (numberOfRowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
             getContext().getContentResolver().notifyChange(Contact.CONTENT_URI, null);

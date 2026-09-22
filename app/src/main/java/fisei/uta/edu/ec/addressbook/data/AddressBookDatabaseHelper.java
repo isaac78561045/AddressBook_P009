@@ -1,5 +1,5 @@
 // AddressBookDatabaseHelper.java
-// SQLiteOpenHelper subclass that defines the app's database
+// Subclase de SQLiteOpenHelper que define la base de datos de la aplicación
 package fisei.uta.edu.ec.addressbook.data;
 
 import android.content.Context;
@@ -17,10 +17,10 @@ class AddressBookDatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // creates the contacts table when the database is created
+    // crea la tabla de contactos cuando se crea la base de datos
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // SQL for creating the contacts table
+        // SQL para crear la tabla de contactos
         final String CREATE_CONTACTS_TABLE =
             "CREATE TABLE " + Contact.TABLE_NAME + "(" +
             Contact._ID + " integer primary key, " +
@@ -31,10 +31,10 @@ class AddressBookDatabaseHelper extends SQLiteOpenHelper {
             Contact.COLUMN_CITY + " TEXT, " +
             Contact.COLUMN_STATE + " TEXT, " +
             Contact.COLUMN_ZIP + " TEXT);";
-        db.execSQL(CREATE_CONTACTS_TABLE); // create the contacts table
+        db.execSQL(CREATE_CONTACTS_TABLE); // crea la tabla de contactos
     }
 
-    // normally defines how to upgrade the database when the schema changes
+    // normalmente define cómo actualizar la base de datos cuando cambia el esquema
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion,
         int newVersion) { }

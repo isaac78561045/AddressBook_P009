@@ -1,5 +1,5 @@
 // MainActivity.java
-// Hosts the app's fragments and handles communication between them
+// Aloja los fragmentos de la aplicación y maneja la comunicación entre ellos
 package fisei.uta.edu.ec.addressbook;
 
 import android.net.Uri;
@@ -14,12 +14,12 @@ public class MainActivity extends AppCompatActivity
     DetailFragment.DetailFragmentListener,
     AddEditFragment.AddEditFragmentListener {
 
-    // key for storing a contact's Uri in a Bundle passed to a fragment
+    // clave para almacenar la Uri de un contacto en un Bundle que se pasa a un fragmento
     public static final String CONTACT_URI = "contact_uri";
 
-    private ContactsFragment contactsFragment; // displays contact list
+    private ContactsFragment contactsFragment; // muestra la lista de contactos
 
-    // display ContactsFragment when MainActivity first loads
+    // muestra ContactsFragment cuando MainActivity se carga por primera vez
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,18 +27,18 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // if layout contains fragmentContainer, the phone layout is in use;
-        // create and display a ContactsFragment
+        // si el diseño contiene fragmentContainer, se está utilizando el diseño de teléfono;
+        // crea y muestra un ContactsFragment
         if (savedInstanceState == null &&
             findViewById(R.id.fragmentContainer) != null) {
-            // create ContactsFragment
+            // crea ContactsFragment
             contactsFragment = new ContactsFragment();
 
-            // add the fragment to the FrameLayout
+            // agrega el fragmento al FrameLayout
             FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragmentContainer, contactsFragment, "contactsFragment");
-            transaction.commit(); // display ContactsFragment
+            transaction.commit(); // muestra ContactsFragment
         }
         else {
             contactsFragment =
@@ -51,97 +51,97 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    // display DetailFragment for selected contact
+    // muestra DetailFragment para el contacto seleccionado
     @Override
     public void onContactSelected(Uri contactUri) {
-        if (findViewById(R.id.fragmentContainer) != null) // phone
+        if (findViewById(R.id.fragmentContainer) != null) // teléfono
             displayContact(contactUri, R.id.fragmentContainer);
-        else { // tablet
-            // removes top of back stack
+        else { // tableta
+            // elimina la parte superior de la pila de retroceso
             getSupportFragmentManager().popBackStack();
 
             displayContact(contactUri, R.id.rightPaneContainer);
         }
     }
 
-    // display AddEditFragment to add a new contact
+    // muestra AddEditFragment para agregar un nuevo contacto
     @Override
     public void onAddContact() {
-        if (findViewById(R.id.fragmentContainer) != null) // phone
+        if (findViewById(R.id.fragmentContainer) != null) // teléfono
             displayAddEditFragment(R.id.fragmentContainer, null);
-        else // tablet
+        else // tableta
             displayAddEditFragment(R.id.rightPaneContainer, null);
     }
 
-    // display a contact
+    // muestra un contacto
     private void displayContact(Uri contactUri, int viewID) {
         DetailFragment detailFragment = new DetailFragment();
 
-        // specify contact's Uri as an argument to the DetailFragment
+        // especifica la Uri del contacto como un argumento para DetailFragment
         Bundle arguments = new Bundle();
         arguments.putParcelable(CONTACT_URI, contactUri);
         detailFragment.setArguments(arguments);
 
-        // use a FragmentTransaction to display the DetailFragment
+        // usa un FragmentTransaction para mostrar DetailFragment
         FragmentTransaction transaction =
             getSupportFragmentManager().beginTransaction();
         transaction.replace(viewID, detailFragment);
         transaction.addToBackStack(null);
-        transaction.commit(); // causes DetailFragment to display
+        transaction.commit(); // hace que DetailFragment se muestre
     }
 
-    // display fragment for adding a new or editing an existing contact
+    // muestra el fragmento para agregar un nuevo contacto o editar uno existente
     private void displayAddEditFragment(int viewID, Uri contactUri) {
         AddEditFragment addEditFragment = new AddEditFragment();
 
-        // if editing existing contact, provide contactUri as an argument
+        // si se edita un contacto existente, proporciona contactUri como argumento
         if (contactUri != null) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(CONTACT_URI, contactUri);
             addEditFragment.setArguments(arguments);
         }
 
-        // use a FragmentTransaction to display the AddEditFragment
+        // usa un FragmentTransaction para mostrar AddEditFragment
         FragmentTransaction transaction =
             getSupportFragmentManager().beginTransaction();
         transaction.replace(viewID, addEditFragment);
         transaction.addToBackStack(null);
-        transaction.commit(); // causes AddEditFragment to display
+        transaction.commit(); // hace que AddEditFragment se muestre
     }
 
-    // return to contact list when displayed contact deleted
+    // regresa a la lista de contactos cuando se elimina el contacto mostrado
     @Override
     public void onContactDeleted() {
-        // removes top of back stack
+        // elimina la parte superior de la pila de retroceso
         getSupportFragmentManager().popBackStack();
         if (contactsFragment != null) {
-            contactsFragment.updateContactList(); // refresh contacts
+            contactsFragment.updateContactList(); // actualiza los contactos
         }
     }
 
-    // display the AddEditFragment to edit an existing contact
+    // muestra AddEditFragment para editar un contacto existente
     @Override
     public void onEditContact(Uri contactUri) {
-        if (findViewById(R.id.fragmentContainer) != null) // phone
+        if (findViewById(R.id.fragmentContainer) != null) // teléfono
             displayAddEditFragment(R.id.fragmentContainer, contactUri);
-        else // tablet
+        else // tableta
             displayAddEditFragment(R.id.rightPaneContainer, contactUri);
     }
 
-    // update GUI after new contact or updated contact saved
+    // actualiza la interfaz de usuario después de guardar un contacto nuevo o editado
     @Override
     public void onAddEditCompleted(Uri contactUri) {
-        // removes top of back stack
+        // elimina la parte superior de la pila de retroceso
         getSupportFragmentManager().popBackStack();
         if (contactsFragment != null) {
-            contactsFragment.updateContactList(); // refresh contacts
+            contactsFragment.updateContactList(); // actualiza los contactos
         }
 
-        if (findViewById(R.id.fragmentContainer) == null) { // tablet
-            // removes top of back stack
+        if (findViewById(R.id.fragmentContainer) == null) { // tableta
+            // elimina la parte superior de la pila de retroceso
             getSupportFragmentManager().popBackStack();
 
-            // on tablet, display contact that was just added or edited
+            // en tableta, muestra el contacto que se acaba de agregar o editar
             displayContact(contactUri, R.id.rightPaneContainer);
         }
     }
