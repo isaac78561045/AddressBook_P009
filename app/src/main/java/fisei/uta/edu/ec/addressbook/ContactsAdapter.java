@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
+import java.util.HashSet;
+import java.util.Set;
+
 import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 
 public class ContactsAdapter
@@ -20,6 +24,7 @@ public class ContactsAdapter
     // cuando el usuario toca un elemento en el RecyclerView
     public interface ContactClickListener {
         void onClick(Uri contactUri);
+        void onLongClick(Uri contactUri, int position); // Para selección múltiple
     }
 
     // subclase anidada de RecyclerView.ViewHolder utilizada para implementar
@@ -39,7 +44,23 @@ public class ContactsAdapter
                     // se ejecuta cuando se hace clic en el contacto de este ViewHolder
                     @Override
                     public void onClick(View view) {
-                        clickListener.onClick(Contact.buildContactUri(rowID));
+                        if (isSelectionMode()) {
+                            toggleSelection(rowID);
+                        } else {
+                            clickListener.onClick(Contact.buildContactUri(rowID));
+                        }
+                    }
+                }
+            );
+            
+            // Listener para mantener presionado (selección múltiple)
+            itemView.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        toggleSelection(rowID);
+                        clickListener.onLongClick(Contact.buildContactUri(rowID), getAdapterPosition());
+                        return true;
                     }
                 }
             );
@@ -54,6 +75,7 @@ public class ContactsAdapter
     // variables de instancia de ContactsAdapter
     private Cursor cursor = null;
     private final ContactClickListener clickListener;
+    private Set<Long> selectedItems = new HashSet<>(); // Almacena los IDs seleccionados
 
     // constructor
     public ContactsAdapter(ContactClickListener clickListener) {
@@ -74,9 +96,49 @@ public class ContactsAdapter
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         cursor.moveToPosition(position);
-        holder.setRowID(cursor.getLong(cursor.getColumnIndexOrThrow(Contact._ID)));
-        holder.textView.setText(cursor.getString(cursor.getColumnIndexOrThrow(
-            Contact.COLUMN_NAME)));
+        long rowID = cursor.getLong(cursor.getColumnIndexOrThrow(Contact._ID));
+        holder.setRowID(rowID);
+        
+        String name = cursor.getString(cursor.getColumnIndexOrThrow(Contact.COLUMN_NAME));
+        int favoriteIndex = cursor.getColumnIndex(Contact.COLUMN_FAVORITE);
+        boolean isFavorite = favoriteIndex != -1 && cursor.getInt(favoriteIndex) == 1;
+        
+        // Muestra la estrella si es favorito
+        if (isFavorite) {
+            holder.textView.setText("⭐ " + name);
+        } else {
+            holder.textView.setText(name);
+        }
+        
+        // Cambia el color de fondo si está seleccionado
+        if (selectedItems.contains(rowID)) {
+            holder.itemView.setBackgroundColor(Color.LTGRAY);
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+    
+    // Métodos para selección múltiple
+    public void toggleSelection(long rowId) {
+        if (selectedItems.contains(rowId)) {
+            selectedItems.remove(rowId);
+        } else {
+            selectedItems.add(rowId);
+        }
+        notifyDataSetChanged();
+    }
+    
+    public void clearSelection() {
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+    
+    public boolean isSelectionMode() {
+        return !selectedItems.isEmpty();
+    }
+    
+    public Set<Long> getSelectedItems() {
+        return selectedItems;
     }
 
     // devuelve el número de elementos que el adaptador vincula

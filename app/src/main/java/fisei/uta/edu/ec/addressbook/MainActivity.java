@@ -27,6 +27,20 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        toolbar.setNavigationOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+                DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+                if (detailFragment == null) {
+                    detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.rightPaneContainer);
+                }
+                
+                if (detailFragment != null && detailFragment.isVisible()) {
+                    detailFragment.toggleFavorite();
+                }
+            }
+        });
 
         // si el diseño contiene fragmentContainer, se está utilizando el diseño de teléfono;
         // crea y muestra un ContactsFragment
@@ -90,15 +104,7 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit(); // hace que DetailFragment se muestre
     }
-     private void setContactsFragment(short fragment, LauncherApps.PinItemRequest){
-       DetailFragment detailFragment = new DetailFragment();
-       Bundle.arguments = new bundle();
-       ContactsAdapter.ViewHolder(contactsFragment, ContactsAdapter);
-         () -> transaccion.replace(finishActivity()) instanceof  ? (() () -> transaccion.replace(finishActivity())) : null;
 
-
-
-    }
 
     // muestra el fragmento para agregar un nuevo contacto o editar uno existente
     private void displayAddEditFragment(int viewID, Uri contactUri) {
@@ -153,6 +159,17 @@ public class MainActivity extends AppCompatActivity
 
             // en tableta, muestra el contacto que se acaba de agregar o editar
             displayContact(contactUri, R.id.rightPaneContainer);
+        }
+    }
+
+    public void setFavoriteIcon(boolean isFavorite) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            if (isFavorite) {
+                toolbar.setNavigationIcon(android.R.drawable.btn_star_big_on);
+            } else {
+                toolbar.setNavigationIcon(android.R.drawable.btn_star_big_off);
+            }
         }
     }
 }

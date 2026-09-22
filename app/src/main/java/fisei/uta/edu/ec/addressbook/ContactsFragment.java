@@ -7,8 +7,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,7 +30,7 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class ContactsFragment extends Fragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // método de devolución de llamada implementado por MainActivity
+    // metodo de devolución de llamada implementado por MainActivity
     public interface ContactsFragmentListener {
         // llamado cuando se selecciona un contacto
         void onContactSelected(Uri contactUri);
@@ -66,6 +71,11 @@ public class ContactsFragment extends Fragment
                 public void onClick(Uri contactUri) {
                     listener.onContactSelected(contactUri);
                 }
+                
+                @Override
+                public void onLongClick(Uri contactUri, int position) {
+                    getActivity().invalidateOptionsMenu(); // Actualiza el menú para mostrar el botón de eliminar
+                }
             }
         );
         recyclerView.setAdapter(contactsAdapter); // establece el adaptador
@@ -92,6 +102,53 @@ public class ContactsFragment extends Fragment
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // Si hay elementos seleccionados, muestra la opción de eliminar
+        if (contactsAdapter != null && contactsAdapter.isSelectionMode()) {
+            MenuItem deleteItem = menu.add(Menu.NONE, R.id.action_delete, Menu.NONE, "Eliminar");
+            deleteItem.setIcon(android.R.drawable.ic_menu_delete);
+            deleteItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_delete) {
+            confirmDeleteSelected();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    private void confirmDeleteSelected() {
+        if (getActivity() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.confirm_title);
+        builder.setMessage("¿Desea eliminar los contactos seleccionados?");
+
+        builder.setPositiveButton(R.string.button_delete,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int button) {
+                    if (getActivity() != null && contactsAdapter != null) {
+                        for (Long id : contactsAdapter.getSelectedItems()) {
+                            Uri contactUri = Contact.buildContactUri(id);
+                            getActivity().getContentResolver().delete(contactUri, null, null);
+                        }
+                        contactsAdapter.clearSelection();
+                        getActivity().invalidateOptionsMenu();
+                    }
+                }
+            }
+        );
+
+        builder.setNegativeButton(R.string.button_cancel, null);
+        builder.create().show();
+    }
+
     // establece ContactsFragmentListener cuando se adjunta el fragmento
     @Override
     public void onAttach(@NonNull Context context) {
@@ -111,12 +168,6 @@ public class ContactsFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LoaderManager.getInstance(this).initLoader(CONTACTS_LOADER, null, this);
-    }
-    @Override
-    public void onActivityFavotito(budle saveInstanceState){
-        super.onCreateView(saveInstanceState);
-        LoaderManager.GetInstance(ower:this). initLoader(CONTACTS_LOADER, args:null, setEnterSharedElementCallback();
-
     }
 
     // llamado desde MainActivity cuando otro fragmento actualiza la base de datos

@@ -31,6 +31,7 @@ public class DatabaseDescription {
         public static final String COLUMN_CITY = "city";
         public static final String COLUMN_STATE = "state";
         public static final String COLUMN_ZIP = "zip";
+        public static final String COLUMN_FAVORITE = "favorite";
 
         // crea un Uri para un contacto específico
         public static Uri buildContactUri(long id) {

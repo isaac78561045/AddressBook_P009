@@ -27,6 +27,7 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class DetailFragment extends Fragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
+
     // métodos de devolución de llamada implementados por MainActivity
     public interface DetailFragmentListener {
         void onContactDeleted(); // llamado cuando se elimina un contacto
@@ -39,6 +40,7 @@ public class DetailFragment extends Fragment
 
     private DetailFragmentListener listener; // MainActivity
     private Uri contactUri; // Uri del contacto seleccionado
+    private boolean isFavorite = false; // Estado de favorito
 
     private TextView nameTextView; // muestra el nombre del contacto
     private TextView phoneTextView; // muestra el teléfono del contacto
@@ -200,6 +202,29 @@ public class DetailFragment extends Fragment
             cityTextView.setText(data.getString(cityIndex));
             stateTextView.setText(data.getString(stateIndex));
             zipTextView.setText(data.getString(zipIndex));
+            
+            // lee el estado de favorito
+            int favoriteIndex = data.getColumnIndexOrThrow(Contact.COLUMN_FAVORITE);
+            isFavorite = data.getInt(favoriteIndex) == 1;
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).setFavoriteIcon(isFavorite);
+            }
+        }
+    }
+    
+    // Cambia el estado de favorito del contacto actual
+    public void toggleFavorite() {
+        isFavorite = !isFavorite;
+        
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(Contact.COLUMN_FAVORITE, isFavorite ? 1 : 0);
+        
+        if (getActivity() != null && contactUri != null) {
+            getActivity().getContentResolver().update(contactUri, values, null, null);
+        }
+            
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setFavoriteIcon(isFavorite);
         }
     }
 

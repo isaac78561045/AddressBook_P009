@@ -10,7 +10,7 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 
 class AddressBookDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "AddressBook.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // constructor
     public AddressBookDatabaseHelper(Context context) {
@@ -30,12 +30,16 @@ class AddressBookDatabaseHelper extends SQLiteOpenHelper {
             Contact.COLUMN_STREET + " TEXT, " +
             Contact.COLUMN_CITY + " TEXT, " +
             Contact.COLUMN_STATE + " TEXT, " +
-            Contact.COLUMN_ZIP + " TEXT);";
+            Contact.COLUMN_ZIP + " TEXT, " +
+            Contact.COLUMN_FAVORITE + " INTEGER DEFAULT 0);";
         db.execSQL(CREATE_CONTACTS_TABLE); // crea la tabla de contactos
     }
 
     // normalmente define cómo actualizar la base de datos cuando cambia el esquema
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion,
-        int newVersion) { }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + Contact.TABLE_NAME + " ADD COLUMN " + Contact.COLUMN_FAVORITE + " INTEGER DEFAULT 0;");
+        }
+    }
 }
