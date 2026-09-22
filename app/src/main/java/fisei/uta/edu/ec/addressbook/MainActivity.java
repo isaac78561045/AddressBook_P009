@@ -2,7 +2,6 @@
 // Aloja los fragmentos de la aplicación y maneja la comunicación entre ellos
 package fisei.uta.edu.ec.addressbook;
 
-import android.content.pm.LauncherApps;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -71,11 +70,20 @@ public class MainActivity extends AppCompatActivity
     public void onContactSelected(Uri contactUri) {
         if (findViewById(R.id.fragmentContainer) != null) // teléfono
             displayContact(contactUri, R.id.fragmentContainer);
-        else { // tableta
-            // elimina la parte superior de la pila de retroceso
+        else {
+
             getSupportFragmentManager().popBackStack();
 
             displayContact(contactUri, R.id.rightPaneContainer);
+        }
+    }
+
+    @Override
+    public void onContactroSelect() {
+        // elimina la parte superior de la pila de retroceso
+        getSupportFragmentManager().popBackStack();
+        if (contactsFragment != null) {
+            contactsFragment.updateContactList(); // actualiza los contactos
         }
     }
 

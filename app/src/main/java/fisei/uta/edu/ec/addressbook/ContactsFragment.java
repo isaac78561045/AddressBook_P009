@@ -35,6 +35,8 @@ public class ContactsFragment extends Fragment
         // llamado cuando se selecciona un contacto
         void onContactSelected(Uri contactUri);
 
+        void onContactroSelect();
+
         // llamado cuando se presiona el botón de agregar
         void onAddContact();
     }
