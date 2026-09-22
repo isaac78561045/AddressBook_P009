@@ -30,7 +30,7 @@ import fisei.uta.edu.ec.addressbook.data.DatabaseDescription.Contact;
 public class AddEditFragment extends Fragment
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // define el método de devolución de llamada implementado por MainActivity
+    // define el metodo de devolución de llamada implementado por MainActivity
     public interface AddEditFragmentListener {
         // llamado cuando el contacto se guarda
         void onAddEditCompleted(Uri contactUri);
