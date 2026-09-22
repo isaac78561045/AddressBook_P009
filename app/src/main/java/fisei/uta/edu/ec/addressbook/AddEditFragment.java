@@ -97,6 +97,7 @@ public class AddEditFragment extends Fragment
         zipTextInputLayout =
             (TextInputLayout) view.findViewById(R.id.zipTextInputLayout);
 
+
         // establece el detector de eventos para el FloatingActionButton
         saveContactFAB = (FloatingActionButton) view.findViewById(
             R.id.saveFloatingActionButton);

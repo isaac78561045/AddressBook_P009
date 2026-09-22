@@ -112,6 +112,12 @@ public class ContactsFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         LoaderManager.getInstance(this).initLoader(CONTACTS_LOADER, null, this);
     }
+    @Override
+    public void onActivityFavotito(budle saveInstanceState){
+        super.onCreateView(saveInstanceState);
+        LoaderManager.GetInstance(ower:this). initLoader(CONTACTS_LOADER, args:null, setEnterSharedElementCallback();
+
+    }
 
     // llamado desde MainActivity cuando otro fragmento actualiza la base de datos
     public void updateContactList() {

@@ -95,7 +95,9 @@ public class DetailFragment extends Fragment
         return view;
     }
 
-    // muestra los elementos de menú de este fragmento
+
+    // muestra los elem
+    // entos de menú de este fragmento
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);

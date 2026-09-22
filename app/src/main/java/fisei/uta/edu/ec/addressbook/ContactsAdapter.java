@@ -21,14 +21,7 @@ public class ContactsAdapter
     public interface ContactClickListener {
         void onClick(Uri contactUri);
     }
-    public class ContactoFavorito
-            extends RecyclerView.Adapter<fisei.uta.edu.ec.addressbook.ContactsAdapter.ContactoFavorito> {
 
-        // interfaz implementada por ContactsFragment para responder
-        // cuando el usuario toca un elemento en el RecyclerView
-        public interface ContactClickListener {
-            void onClick(Uri contactUri);
-        }
     // subclase anidada de RecyclerView.ViewHolder utilizada para implementar
     // el patrón view-holder en el contexto de un RecyclerView
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,6 +68,7 @@ public class ContactsAdapter
             android.R.layout.simple_list_item_1, parent, false);
         return new ViewHolder(view); // devuelve el ViewHolder del elemento actual
     }
+
 
     // establece el texto del elemento de la lista para mostrar el nombre del contacto
     @Override

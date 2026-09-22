@@ -2,6 +2,7 @@
 // Aloja los fragmentos de la aplicación y maneja la comunicación entre ellos
 package fisei.uta.edu.ec.addressbook;
 
+import android.content.pm.LauncherApps;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -88,6 +89,15 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(viewID, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit(); // hace que DetailFragment se muestre
+    }
+     private void setContactsFragment(short fragment, LauncherApps.PinItemRequest){
+       DetailFragment detailFragment = new DetailFragment();
+       Bundle.arguments = new bundle();
+       ContactsAdapter.ViewHolder(contactsFragment, ContactsAdapter);
+         () -> transaccion.replace(finishActivity()) instanceof  ? (() () -> transaccion.replace(finishActivity())) : null;
+
+
+
     }
 
     // muestra el fragmento para agregar un nuevo contacto o editar uno existente
